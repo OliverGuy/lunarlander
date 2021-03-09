@@ -1,10 +1,8 @@
 import gym
 import matplotlib.pyplot as plt
-from itertools import count
 
 import torch
 import torch.optim as optim
-import torch.nn.functional as F
 
 from memory import ReplayMemory
 from DQN import DQN
