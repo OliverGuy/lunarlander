@@ -39,9 +39,9 @@ class DQN_parametrized(nn.Module):
         n_conv_blocks = trial.suggest_int('n_layers', 1, 3)
 
         # heigt and width have to be greather than or equal to 40 with those parameters
-        self.conv = []
+        self.conv = nn.ModuleList([])
         self.conv_activation = []
-        self.bn = []
+        self.bn = nn.ModuleList([])
         convw = width
         convh = height
         for i in range(n_conv_blocks):
@@ -64,7 +64,7 @@ class DQN_parametrized(nn.Module):
         ### LINEAR LAYERS ###
         n_lin_blocks = trial.suggest_int('n_layers_1', 1, 3)  
         in_features = out_channel * convw * convh
-        self.lin_1 = []
+        self.lin_1 = nn.ModuleList([])
         self.lin_activation_1 = []
         for i in range(n_lin_blocks):
             out_features = trial.suggest_int(f'out_features_1_{i}', 256, 1024)
@@ -83,7 +83,7 @@ class DQN_parametrized(nn.Module):
 
         ### LINEAR LAYERS ###
         n_lin_blocks = trial.suggest_int('n_layers_2', 0, 2)  
-        self.lin_2 = []
+        self.lin_2 = nn.ModuleList([])
         self.lin_activation_2 = []
         in_features = hidden_size
         for i in range(n_lin_blocks):
@@ -124,7 +124,7 @@ class DQN_parametrized(nn.Module):
         log_var = self.log_var(x)
 
         #reparameterization
-        x = mu + torch.exp(log_var) * torch.randn(list(log_var.shape))
+        x = mu + torch.exp(log_var) * torch.randn(list(log_var.shape), device = mu.device)
 
         for i in range(len(self.lin_2) - 1):
             x = self.lin_2[i](x)
