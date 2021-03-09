@@ -52,9 +52,7 @@ steps = 0
 for i_episode in range(num_episodes):
     # Initialize the environment and state
     env.reset()
-    last_screen = get_screen(env).to(device)
-    current_screen = get_screen(env).to(device)
-    state = current_screen - last_screen
+    state = get_screen(env).to(device)
     episode_rewards.append(0)
     done = False
     while not done:
@@ -66,10 +64,8 @@ for i_episode in range(num_episodes):
         reward = torch.tensor([reward], device=device)
 
         # Observe new state
-        last_screen = current_screen
-        current_screen = get_screen(env).to(device)
         if not done:
-            next_state = current_screen - last_screen
+            next_state = get_screen(env).to(device)
         else:
             next_state = None
 
