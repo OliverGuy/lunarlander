@@ -15,8 +15,6 @@ from training import optimize_model
 # based on https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html
 
 
-# XXX unwrapped ? cf
-# https://discuss.pytorch.org/t/in-the-official-q-learning-example-what-does-the-env-unwrapped-do-exactly/28695
 env = gym.make('LunarLander-v2')
 
 plt.ion()  # interactive mode, to draw in non-blocking mode
@@ -48,8 +46,6 @@ memory = ReplayMemory(REPLAY_MEMORY_SIZE)
 
 TARGET_UPDATE = 10000  # period of target network update
 optimizer = optim.RMSprop(pred_net.parameters())
-
-# TODO make weights update be after a certain step count
 
 ### TRAINING LOOP ###
 num_episodes = 50
