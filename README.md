@@ -1,19 +1,9 @@
 # LunarLander Solver
 
-Test run:
+These programs rely mainly on `pytorch`, `gym` and `optuna`.
 
-```bash
-python main.py
-```
+They can be ran in two ways:
 
-## References
+1. `python main.py` will train a single convolutional DDQN model.
 
-[The problem](https://gym.openai.com/envs/LunarLander-v2/)
-
-Q-Learning script adapted from [this PyTorch tutorial](https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html)
-
-DDQN paper: https://www.nature.com/articles/nature14236
-
-## To-do
-
-- [ ] Start from the DDQN paper's original architecture ?
+2. The `experiments.ipynb` notebook will let you run hyper-parameter tuning experiments.
