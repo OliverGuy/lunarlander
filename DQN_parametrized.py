@@ -36,12 +36,12 @@ class DQN_parametrized(nn.Module):
 
 
         ### CONVOLUTIONS ###
-        n_conv_blocks = trial.suggest_int('n_layers', 1, 3)
+        n_conv_blocks = trial.suggest_int('n_conv_blocks', 1, 3)
 
         # heigt and width have to be greather than or equal to 40 with those parameters
-        self.conv = nn.ModuleList([])
+        self.conv = []
         self.conv_activation = []
-        self.bn = nn.ModuleList([])
+        self.bn = []
         convw = width
         convh = height
         for i in range(n_conv_blocks):
@@ -62,16 +62,16 @@ class DQN_parametrized(nn.Module):
             self.bn.append(nn.BatchNorm2d(out_channel))
 
         ### LINEAR LAYERS ###
-        n_lin_blocks = trial.suggest_int('n_layers_1', 1, 3)  
+        n_lin_blocks_1 = trial.suggest_int('nlin1blocks', 1, 3)  
         in_features = out_channel * convw * convh
-        self.lin_1 = nn.ModuleList([])
+        self.lin_1 = []
         self.lin_activation_1 = []
-        for i in range(n_lin_blocks):
-            out_features = trial.suggest_int(f'out_features_1_{i}', 256, 1024)
+        for i in range(n_lin_blocks_1):
+            out_features = trial.suggest_int(f'out_nlin_features_1_{i}', 256, 1024)
             self.lin_1.append(nn.Linear(in_features, out_features))
             in_features = out_features
 
-            act_name = trial.suggest_categorical(f'activation_1_{i}', ['relu', 'selu', 'hardswish'])
+            act_name = trial.suggest_categorical(f'nlin_activation_1_{i}', ['relu', 'selu', 'hardswish'])
             self.lin_activation_1.append(get_activation_function(act_name))
 
 
@@ -82,16 +82,16 @@ class DQN_parametrized(nn.Module):
         self.log_var = nn.Linear(in_features, hidden_size)
 
         ### LINEAR LAYERS ###
-        n_lin_blocks = trial.suggest_int('n_layers_2', 0, 2)  
-        self.lin_2 = nn.ModuleList([])
+        n_lin_blocks_2 = trial.suggest_int('n_lin2_blocks', 0, 2)  
+        self.lin_2 = []
         self.lin_activation_2 = []
         in_features = hidden_size
-        for i in range(n_lin_blocks):
-            out_features = trial.suggest_int(f'out_features_2_{i}', 16, 512)
+        for i in range(n_lin_blocks_2):
+            out_features = trial.suggest_int(f'out_lin2_features_2_{i}', 16, 512)
             self.lin_2.append(nn.Linear(in_features, out_features))
             in_features = out_features
 
-            act_name = trial.suggest_categorical(f'activation_2_{i}', ['relu', 'selu', 'hardswish'])
+            act_name = trial.suggest_categorical(f'lin2_activation_2_{i}', ['relu', 'selu', 'hardswish'])
             self.lin_activation_2.append(get_activation_function(act_name))
 
         self.lin_2.append(nn.Linear(in_features, n_actions))
@@ -124,7 +124,7 @@ class DQN_parametrized(nn.Module):
         log_var = self.log_var(x)
 
         #reparameterization
-        x = mu + torch.exp(log_var) * torch.randn(list(log_var.shape), device = mu.device)
+        x = mu + torch.exp(log_var) * torch.randn(list(log_var.shape))
 
         for i in range(len(self.lin_2) - 1):
             x = self.lin_2[i](x)
