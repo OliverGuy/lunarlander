@@ -49,7 +49,7 @@ class DQN_parametrized(nn.Module):
             stride = trial.suggest_int(f'stride_{i}', 1, 3)
             padding = trial.suggest_int(f'padding_{i}', 0, 1)
             in_channel = 3 if i==0 else out_channel
-            out_channel = trial.suggest_int(f'out_channel_{i}', 3, 12)
+            out_channel = trial.suggest_int(f'out_channels_{i}', 3, 12)
 
             convw = conv2d_size_out(convw, kernel_size, stride, padding)
             convh = conv2d_size_out(convh, kernel_size, stride, padding)
@@ -62,16 +62,16 @@ class DQN_parametrized(nn.Module):
             self.bn.append(nn.BatchNorm2d(out_channel))
 
         ### LINEAR LAYERS ###
-        n_lin_blocks_1 = trial.suggest_int('nlin1blocks', 1, 3)  
+        n_lin_blocks_1 = trial.suggest_int('n_lin1_blocks', 1, 3)  
         in_features = out_channel * convw * convh
         self.lin_1 = []
         self.lin_activation_1 = []
         for i in range(n_lin_blocks_1):
-            out_features = trial.suggest_int(f'out_nlin_features_1_{i}', 256, 1024)
+            out_features = trial.suggest_int(f'out_lin1_features_{i}', 256, 1024)
             self.lin_1.append(nn.Linear(in_features, out_features))
             in_features = out_features
 
-            act_name = trial.suggest_categorical(f'nlin_activation_1_{i}', ['relu', 'selu', 'hardswish'])
+            act_name = trial.suggest_categorical(f'lin1_activation_{i}', ['relu', 'selu', 'hardswish'])
             self.lin_activation_1.append(get_activation_function(act_name))
 
 
@@ -87,11 +87,11 @@ class DQN_parametrized(nn.Module):
         self.lin_activation_2 = []
         in_features = hidden_size
         for i in range(n_lin_blocks_2):
-            out_features = trial.suggest_int(f'out_lin2_features_2_{i}', 16, 512)
+            out_features = trial.suggest_int(f'out_lin2_features_{i}', 16, 512)
             self.lin_2.append(nn.Linear(in_features, out_features))
             in_features = out_features
 
-            act_name = trial.suggest_categorical(f'lin2_activation_2_{i}', ['relu', 'selu', 'hardswish'])
+            act_name = trial.suggest_categorical(f'lin2_activation_{i}', ['relu', 'selu', 'hardswish'])
             self.lin_activation_2.append(get_activation_function(act_name))
 
         self.lin_2.append(nn.Linear(in_features, n_actions))
